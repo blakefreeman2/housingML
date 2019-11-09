@@ -1,2 +1,1 @@
-# housingML
-Final Project SMU Bootcamp
+# Housing Prices
