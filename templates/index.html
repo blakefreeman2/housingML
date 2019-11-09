@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta name="generator" content="pandoc" />
+    <title>House Prices: Advanced Regression Techniques</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+
+    <!-- CSS STYLE SHEET-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+  
+
+    <!-- BOOTSTRAP -->
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    
+    
+    <!-- FOR SIDE BAR GLOSSARY POP UP -->
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/highlight.min.js"></script>
+
+    <script>
+        hljs.LANGUAGES.r=function(a){var b="([a-zA-Z]|\\.[a-zA-Z.])[a-zA-Z0-9._]*";return{c:[a.HCM,{b:b,l:b,k:{keyword:"function if in break next repeat else for return switch while try tryCatch|10 stop warning require library attach detach source setMethod setGeneric setGroupGeneric setClass ...|10",literal:"NULL NA TRUE FALSE T F Inf NaN NA_integer_|10 NA_real_|10 NA_character_|10 NA_complex_|10"},r:0},{cN:"number",b:"0[xX][0-9a-fA-F]+[Li]?\\b",r:0},{cN:"number",b:"\\d+(?:[eE][+\\-]?\\d*)?L\\b",r:0},{cN:"number",b:"\\d+\\.(?!\\d)(?:i\\b)?",r:0},{cN:"number",b:"\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",r:0},{b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[a.BE],r:0},{cN:"string",b:"'",e:"'",c:[a.BE],r:0}]}}(hljs); </script>
+ 
+
+    <!-- MANIFIC POP UP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/0.8.9/jquery.magnific-popup.min.js"></script>
+    
+    <script type="text/javascript"
+      src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script><script defer="defer">// Function to generate the dynamic table of contents
+    jQuery.fn.generate_TOC = function () {
+      var base = $(this[0]);
+    
+      var selectors = ['h1', 'h2', 'h3', 'h4'];
+    
+      var last_ptr = [{}, {}, {}, {}];
+    
+      var anchors = {};
+    
+      generate_anchor = function (text) {
+        var test = text.replace(/\W/g, '_');
+    
+        while(test in anchors){
+          //if no suffix, add one
+          if(test.match(/_\d+$/) === null){
+            test = test + "_2";
+          }
+          //else generate unique id for duplicates by adding one to the suffix
+          else {
+            test = test.replace(/_(\d+)$/, function(match, number){ var num=+number+1; return("_" + num) });
+          }
+        }
+        anchors[test]=1;
+        return(test);
+      }
+    
+      $(selectors.join(',')).filter(function(index) { return $(this).parent().attr("id") != 'header'; }).each(function () {
+    
+        var heading = $(this);
+        var idx = selectors.indexOf(heading.prop('tagName').toLowerCase());
+        var itr = 0;
+    
+        while (itr <= idx) {
+          if (jQuery.isEmptyObject(last_ptr[itr])) {
+            last_ptr[itr] = $('<ul>').addClass('nav');
+            if (itr === 0) {
+              base.append(last_ptr[itr])
+            } else {
+              if(last_ptr[itr-1].children('li').length === 0){
+                last_ptr[itr-1].append(last_ptr[itr]);
+              }
+              else {
+                last_ptr[itr - 1].children('li').last().append(last_ptr[itr]);
+              }
+            }
+          }
+          itr++;
+        }
+        var anchor = generate_anchor(heading.text());
+        heading.attr('id', anchor);
+        var a = $('<a>')
+        .text(heading.text())
+        .attr('href', '#' + anchor);
+    
+      var li = $('<li>')
+        .append(a);
+    
+      last_ptr[idx].append(li);
+      for (i = idx + 1; i < last_ptr.length; i++) {
+        last_ptr[i] = {};
+      }
+      });
+    }
+    /* run scripts when document is ready */
+    $(function() {
+      "use strict";
+    
+      var $window = $(window);
+      var $body = $(document.body);
+    
+      /* size of thumbnails */
+    
+      var hidden_types = ['source']
+      var output_types = ['output', 'message', 'warning', 'error']
+    
+      /* style tables */
+      $('table').addClass('table table-striped table-bordered table-hover table-condensed');
+    
+      $('pre code').each(function(i, e) {
+        hljs.highlightBlock(e);
+      });
+    
+      /* Magnific Popup */
+      $(".thumbnail").each(function(){
+        $(this).magnificPopup({
+          disableOn: 768,
+          closeOnContentClick: true,
+    
+          type: 'image',
+          items: {
+            src: $(this).find('img').attr('src'),
+          }
+        });
+      });
+    
+      function toggle_block(obj, show) {
+        var span = obj.find('span');
+        if(show === true){
+          span.removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+          obj.next('pre').slideDown();
+        }
+        else {
+          span.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+          obj.next('pre').slideUp();
+        }
+      }
+    
+      function toggle_thumbnails(imgs, show){
+        if(show === true){
+          imgs.parent().show();
+          imgs.show();
+        }
+        else {
+          img.slideUp(400, function(){ img.parent().hide(); });
+        }
+      }
+    
+      function global_toggle(obj){
+        var type = obj.attr('type');
+        var show = !obj.parent('li').hasClass('active');
+        if(show === true){
+          obj.parent('li').addClass('active');
+        }
+        else{
+          obj.parent('li').removeClass('active');
+        }
+        if(type == 'figure'){
+          toggle_thumbnails($('.thumbnail img'), show);
+        }
+        else {
+          $('.toggle.' + type).each(function() { toggle_block($(this), show); });
+        }
+      }
+    
+      /* onclick toggle next code block */
+      $('.toggle').click(function() {
+        var span = $(this).find('span')
+        console.log(span.hasClass('glyphicon-chevron-down'))
+        toggle_block($(this), !span.hasClass('glyphicon-chevron-down'))
+        return false
+      })
+    
+      // global toggles
+      $('.toggle-global').click(function(){
+        var type = $(this).attr('type');
+        if(type === 'all-source'){
+            $('li a.source').each(function() {
+              global_toggle($(this));
+            });
+          }
+        else if(type === 'all-output'){
+          $.each(output_types, function(i, val){
+            console.log(val);
+            global_toggle($('li a.' + val));
+          });
+        }
+        else {
+          global_toggle($(this));
+        }
+        return false;
+      });
+      /* TABLE OF CONTENTS */
+      if($(['h1', 'h2', 'h3', 'h4'].join(',')).length > 0){
+        $('body > #wrap > .container > .row').append('<div class="col-md-2"><div id="toc" class="well sidebar sidenav affix hidden-print"/></div>');
+        $('#toc').generate_TOC();
+      }
+    
+      $.each(hidden_types, function(i, type) {
+        $('li[type=' + type + ']').each(function(){ global_toggle($(this)); });
+      });
+    
+      /* remove paragraphs with no content */
+      $('p:empty').remove();
+    
+      $body.scrollspy({
+        target: '.sidebar',
+      });
+    
+      /* theme switch */
+      $('.theme-switch').click(function(){
+        var css = $('link[title=' + $(this).attr('title') + ']');
+        $('#theme[rel=stylesheet]').attr('href', css.attr('href'));
+        $('.theme-switch').closest('li').removeClass('active');
+        $(this).closest('li').addClass('active');
+        return false;
+      });
+      /* code style switch */ //
+      $('.highlight-switch').click(function(){
+        var css = $('link[title="' + $(this).attr('title') + '"]');
+        $('#highlight[rel=stylesheet]').attr('href', css.attr('href'));
+        $('.highlight-switch').closest('li').removeClass('active');
+        $(this).closest('li').addClass('active');
+        return false;
+      });
+    
+      //TODO refresh on show/hide
+      $window.on('load', function () {
+        $body.scrollspy('refresh');
+      })
+    
+    });
+    </script>
+  </head>
+
+  <body>
+    <div id="wrap">
+    <div class="container">
+    <div class="row">
+    <div class="contents col-md-10">
+    <!--
+      Start
+    -->
+    <h1 style="color: rgb(131, 30, 12); font-family: times, serif; font-size:35pt; font-style:italic; font-weight: bold">House Prices: Advanced Regression Techniques</h1>
+    <p style="color: rgb(61, 40, 39); font-family: times, serif; font-size:15pt; font-style:italic">By: Benjamin Podell, Blake Freeman, Edel Farah, Sarah Delia, Tomeka Morrison, Valentina Delia <br></p>
+    <div class="row">
+    <button class="toggle btn btn-xs btn-primary">
+    <span class="glyphicon glyphicon-chevron-down"></span> Competition Description
+    </button><pre style=""><code class="source Python">
+      
+      Ask a home buyer to describe their dream house, and they probably won't begin with the height of the 
+      basement ceiling or the proximity to an east-west railroad. But this playground competition's dataset 
+      proves that much more influences price negotiations than the number of bedrooms or a white-picket fence.
+
+      With 79 explanatory variables describing (almost) every aspect of residential homes in Ames, Iowa, this
+      competition challenges you to predict the final price of each home. 
+      <div class="box">
+          <img src="./Images/housing_prices.jpg" alt="Housing Prices" height="600" width="880" alignment="left">
+     </code></pre><button class="toggle btn btn-xs btn-info">
+    <span class="glyphicon glyphicon-chevron-down"></span> Data Sources
+    </button><pre style=""><code class="message">
+      File descriptions
+
+      train.csv - the training set
+      test.csv - the test set
+      data_description.txt - full description of each column, originally prepared by 
+      Dean De Cock but lightly edited to match the column names used here
+        
+      sample_submission.csv - a benchmark submission from a linear regression on year 
+      and month of sale, lot square footage, and number of bedrooms
+        <div class="box">
+            <img src="./Images/dataSource.PNG" alt="Housing Prices" height="600" width="880" alignment="left">
+            <p class="category"> Kaggle Data Set</p>
+    </code></pre><button class="toggle btn btn-xs btn-primary">
+    <span class="glyphicon glyphicon-chevron-down"></span> Loading And Exploring The Data
+    </button><pre style=""><code class="source Python">
+      ### Read Data and Load Packages 
+
+      # Load Packages
+      library(MASS) 
+      library(Metrics)
+      library(corrplot)
+      library(randomForest)
+      library(lars)
+      library(ggplot2)
+      library(xgboost)
+      library(Matrix)
+      library(methods)
+      library(caret)
+      ```
+      
+  
+      # Read Data
+      Training <- read.csv("../input/train.csv")
+      Test <- read.csv("../input/test.csv")
+      # Test whether data is successfully loaded
+      names(Training)</code></pre><button class="output R toggle btn btn-xs btn-success">
+    <span class="glyphicon glyphicon-chevron-down"></span> Preparing The Data For Modeling
+    </button><pre style=""><code class="output Python">
+        label_train <- all$SalePrice[!is.na(all$SalePrice)]
+
+        # put our testing & training data into two seperates Dmatrixs objects
+        dtrain <- xgb.DMatrix(data = as.matrix(train1), label= label_train)
+        dtest <- xgb.DMatrix(data = as.matrix(test1))
+    </code></pre></div>
+    
+    <h2>Modeling The Data</h2>
+    Grouped by number of gears (indicated by color).
+    <div class="row">
+    <button class="source R toggle btn btn-xs btn-primary">
+    <span class="glyphicon glyphicon-chevron-down"></span> Data Predictions
+    </button><pre style=""><code class="source r">
+      
+xgb_tune <-train(SalePrice ~.,
+data=Training_Inner,
+method="xgbTree",
+metric = "RMSE",
+trControl=cv.ctrl,
+tuneGrid=xgb.grid
+)
+
+print(xgb.grid)
+    </code></pre><div class="row"><div class="col-md-offset-3 col-md-6">
+    </div>
+    </div>
+    <h2>Summary Report</h2>
+    Final comments and take aways go here 
+    <div class="row">
+    <button class="source R toggle btn btn-xs btn-primary">
+    <span class="glyphicon glyphicon-chevron-down"></span> 
+    </button><pre style=""><code class="source r">Graphs/Corrplot/Findings/Group Photo/Blakes Thoughts</code></pre><div class="row"><div class="col-md-offset-3 col-md-6">
+        <img src="./Images/blakes_thoughts.jpg" alt="Blakes Thoughts" height="500" width="400" alignment="left">
+        <p class="category"> Kaggle Data Set</p>
+    </div>
+    </div>
+    </div>
+      
+    <link rel="stylesheet" id="theme" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" media="screen"></link><link rel="stylesheet" id="highlight" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/default.min.css" media="screen"></link>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.js"></script>
+    
+
+    </body>
+    </html>
