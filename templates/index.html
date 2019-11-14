@@ -561,23 +561,6 @@
       <div class="box">
         <img src="./Images/ResidualPlot.png" alt="Year Remodel" height="500" width="700" alignment="left">
 
-      # import the regressor 
-      from sklearn.tree import DecisionTreeRegressor  
-        
-      # create a regressor object 
-      regressor = DecisionTreeRegressor(random_state = 42)  
-        
-      # fit the regressor with X and Y data 
-      regressor.fit(X, y) 
-
-      training_score = regressor.score(X_train, y_train)
-      testing_score = regressor.score(X_test, y_test)
-
-      print(f"Training Score: {training_score}")
-      print(f"Testing Score: {testing_score}")
-  
-      <mark style="background-color: white">Output: Training Score: 0.9897327659059136, Testing Score: 0.9928085181043863</mark>
-
       from sklearn.preprocessing import MinMaxScaler
       scaler = MinMaxScaler(feature_range=(0, 1))
 
@@ -673,7 +656,21 @@
     <div class="row">
     <button class="source R toggle btn btn-xs btn-primary">
     <span class="glyphicon glyphicon-chevron-down"></span> 
-    </button><pre style=""><code class="source r">In summmary, when it came to initially cleaning our data, we used pandas and numpy. Then we determined the cost per square feet by     dividing the sale price by total square feet to begin our Machine Learning Model. We used matplotlib and seaborn for the exploration    aspect of our data. We used Sklearn to make a linear regression model, and ensemble a decision tree. We attempted to use K Nearest     Neighbors but ultimately decided to use the decision tree for a more accurate prediction. Deriving relevant variables, we made a       heatmap only including things with over 45% relevance to total price per square foot. We created a residual plot to compare the         relationship from our training and testing data. And various plots compared to the price per square foot; A scatter plot with          Unfinished Square Feet of Basement Area; a scatter plot with year remodeled or construction date if it hasn’t been remodeled;          a boxplot comparing whether or not a house has poured concrete; a boxplot categorizing whether the exterior quality is Typical         or Average or not; and finally, an elbow curve pertaining to our KNN model.</code></pre><div class="row"><div class="col-md-offset-3 col-md-6">
+    </button><pre style=""><code class="source r">
+      In summmary, when it came to initially cleaning our data, we used pandas and numpy. Then we determined the cost per square 
+      feet by dividing  the sale price by total square feet to begin our Machine Learning Model. We used matplotlib and seaborn 
+      for the exploration aspect of our data. We used Sklearn to make a linear regression model, and ensemble a decision tree. 
+      We attempted to use K Nearest Neighbors but ultimately decided to use the decision tree for a more accurate prediction. 
+      Deriving relevant variables, we made a heatmap only including things with over 45% relevance to total price per square foot. 
+      We created a residual plot to compare the relationship from our training and testing data. And various plots compared to the 
+      price per square foot; A scatter plot with Unfinished Square Feet of Basement Area; a scatter plot with year remodeled or 
+      construction date if it hasn’t been remodeled; a boxplot comparing whether or not a house has poured concrete; a boxplot 
+      categorizing whether the exterior quality is Typical or Average or not; and finally, an elbow curve pertaining to our KNN model.
+
+      In conclusion, after testing several supervised ML models we received the best results from the Decision Tree Regressor 
+      (Random Forest). Though the size of the model can be cumbersome and can use a large amount of computing power this did 
+      preform the best with a R score of .9897 for Training and .9928 for testing.
+    </code></pre><div class="row"><div class="col-md-offset-3 col-md-6">
         <!-- <img src="./Images/blakes_thoughts.jpg" alt="Blakes Thoughts" height="500" width="400" alignment="left">
         <p class="category"> Kaggle Data Set</p> -->
     </div>
